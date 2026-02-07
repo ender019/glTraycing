@@ -1,8 +1,8 @@
 #include "init.h"
 
-#include "src/base/context/context.h"
 #include "src/base/graphics/graphics.h"
 #include "src/base/window/window.h"
+#include <stdlib.h>
 
 int run() {
     Context* ctx = initContext();
@@ -21,5 +21,6 @@ int run() {
     if (!destroyWindow(ctx)) {
         return -1;
     }
+    free(ctx);
     return 1;
 }
