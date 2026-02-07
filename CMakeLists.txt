@@ -33,14 +33,16 @@ target_include_directories(glad PRIVATE ${glad_DIR}/include)
 set(SOURCES 
     main.c
     src/base/init.c
-    src/context/context.c
-    src/window/glfw_window.c
+    src/base/context/context.c
+    src/base/graphics/graphics.c
+    src/base/window/glfw_window.c
 )
 
 set(HEADERS 
     src/base/init.h
-    src/context/context.h
-    src/window/window.h
+    src/base/context/context.h
+    src/base/graphics/graphics.h
+    src/base/window/window.h
 )
 
 add_executable(${project} ${SOURCES} ${HEADERS})

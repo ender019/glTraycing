@@ -1,11 +1,8 @@
 #include "init.h"
 
 #include "src/base/context/context.h"
+#include "src/base/graphics/graphics.h"
 #include "src/base/window/window.h"
-
-int work(Context* ctx) {
-    return ctx != NULL;
-}
 
 int run() {
     Context* ctx = initContext();
@@ -15,7 +12,10 @@ int run() {
     if (!initWindow(ctx)) {
         return -1;
     }
-    if (!startWindow(ctx, work)) {
+    if (!initGraphics(ctx)) {
+        return -1;
+    }
+    if (!startWindow(ctx, drawing)) {
         return -1;
     }
     if (!destroyWindow(ctx)) {
