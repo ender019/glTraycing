@@ -1,8 +1,10 @@
-#include "src/base/context/context.h"
 #include "window.h"
 
-#include <GLFW/glfw3.h>
 #include <stdio.h>
+
+int mockwork(Context* ctx) {
+    return ctx != NULL;
+}
 
 int initWindow(Context* ctx) {
     // Инициализация GLFW
@@ -51,6 +53,10 @@ int startWindow(Context* ctx, int(work)(Context*)) {
     GLFWwindow* window = getCtxWindow(ctx);
     if (!window) {
         return -1;
+    }
+
+    if (work == NULL) {
+        work = mockwork;
     }
 
     // Главный цикл

@@ -1,8 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <GLFW/glfw3.h>
-
 #include "src/base/context/context.h"
 
 int initWindow(Context* ctx);
