@@ -1,9 +1,10 @@
 #include "context.h"
 
-#include <GLFW/glfw3.h>
 #include <stdlib.h>
 
 struct Context {
+    unsigned int vao, vbo;
+    GLuint program;
     GLFWwindow* window;
 };
 
@@ -13,6 +14,30 @@ Context* initContext(){
         return NULL;
     }
     return ctx;
+}
+
+GLint getVAO(Context* ctx) {
+    return ctx->vao;
+}
+
+GLint getVBO(Context* ctx) {
+    return ctx->vbo;
+}
+
+GLint getProgram(Context* ctx) {
+    return ctx->program;
+}
+
+void setVAO(Context* ctx, unsigned int vao) {
+    ctx->vao = vao;
+}
+
+void setVBO(Context* ctx, unsigned int vbo) {
+    ctx->vbo = vbo;
+}
+
+void setProgram(Context* ctx, GLint program) {
+    ctx->program = program;
 }
 
 GLFWwindow* getCtxWindow(Context* ctx) {
