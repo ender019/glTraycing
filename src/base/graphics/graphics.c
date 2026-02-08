@@ -101,13 +101,19 @@ int initGraphics(Context* ctx) {
         return -1; 
     }
     float vertices[] = {
-         0.7f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
-         -0.7f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-         0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f,
+         0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
+         -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+         -0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 1.0f,
+         0.5f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 2, 1,  // первый треугольник
+        0, 2, 3   // второй треугольник
     };
         
     // Создание VBO и VAO
-    unsigned int VBO, VAO;
+    unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
@@ -120,12 +126,17 @@ int initGraphics(Context* ctx) {
     
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     setVAO(ctx, VAO);
     setVBO(ctx, VBO);
+    setEBO(ctx, EBO);
     setWindowResizeCallback(ctx, framebuffer_size_callback);
 
     return 1;
@@ -175,11 +186,9 @@ int drawing(Context* ctx) {
     setupRatio(ctx);
     glUseProgram(getProgram(ctx));
     glBindVertexArray(getVAO(ctx));
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     return 1;
 }
-
-int drawTriangle();
 
 int uploadBuffer(float* buf) {
     if (buf == NULL) {

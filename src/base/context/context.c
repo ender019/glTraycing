@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 struct Context {
-    unsigned int vao, vbo;
+    unsigned int vao, vbo, ebo;
     GLuint program;
     GLFWwindow* window;
 };
@@ -24,6 +24,10 @@ GLint getVBO(Context* ctx) {
     return ctx->vbo;
 }
 
+GLint getEBO(Context* ctx) {
+    return ctx->ebo;
+}
+
 GLint getProgram(Context* ctx) {
     return ctx->program;
 }
@@ -34,6 +38,10 @@ void setVAO(Context* ctx, unsigned int vao) {
 
 void setVBO(Context* ctx, unsigned int vbo) {
     ctx->vbo = vbo;
+}
+
+void setEBO(Context* ctx, unsigned int ebo) {
+    ctx->ebo = ebo;
 }
 
 void setProgram(Context* ctx, GLint program) {
