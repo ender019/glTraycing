@@ -5,7 +5,7 @@
 
 int initWindow(Context* ctx);
 
-int setWindowResizeCallback(Context* ctx, void(func)(GLFWwindow* window, int width, int height));
+int setWindowResizeCallback(Context* ctx, void(clbck)(GLFWwindow* window, int width, int height));
 
 int startWindow(Context* ctx, int(work)(Context*));
 

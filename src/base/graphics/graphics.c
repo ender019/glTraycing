@@ -1,7 +1,9 @@
 #include "graphics.h"
+#include "glad/gl.h"
 #include "src/base/context/context.h"
 #include "src/base/window/window.h"
 
+#include <GLFW/glfw3.h>
 #include <stdio.h>
 
 
@@ -9,17 +11,22 @@
 const char* vertexShaderSource = 
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec3 aColor;\n"
+    "uniform float window_d;\n"
+    "out vec3 Color;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "   gl_Position = vec4(aPos.x * window_d, aPos.yz, 1.0);\n"
+    "   Color = aColor;\n"
     "}\0";
 
 const char* fragmentShaderSource = 
     "#version 330 core\n"
+    "in vec3 Color;\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "   FragColor = vec4(Color, 1.0f);\n"
     "}\0";
 
 
@@ -94,22 +101,25 @@ int initGraphics(Context* ctx) {
         return -1; 
     }
     float vertices[] = {
-         0.0f,  0.5f,
-        -0.5f, -0.5f,
-         0.5f, -0.5f
+         0.7f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
+         -0.7f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+         0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f,
     };
         
     // Создание VBO и VAO
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    
+
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -121,14 +131,55 @@ int initGraphics(Context* ctx) {
     return 1;
 }
 
+int setupVAO(GLuint VAO, GLuint VBO) {
+    glGenVertexArrays(1, &VAO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    return 1;
+}
+
+int setupVBO(GLuint VBO, float* vertices) {
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    return 1;
+}
+
+int setupRatio(Context* ctx) {
+    GLFWwindow* window = getCtxWindow(ctx);
+    if (window == NULL) {
+        return -1;
+    }
+    int fb_width, fb_height;
+    glfwGetFramebufferSize(window, &fb_width, &fb_height);
+    int uni_loc = glGetUniformLocation(getProgram(ctx), "window_d");
+    glUniform1f(uni_loc, (float)fb_height / fb_width);
+    return 1;
+}
+
 int drawing(Context* ctx) {
     glClear(GL_COLOR_BUFFER_BIT);
     
+    setupRatio(ctx);
     glUseProgram(getProgram(ctx));
     glBindVertexArray(getVAO(ctx));
     glDrawArrays(GL_TRIANGLES, 0, 3);
     return 1;
 }
+
+int drawTriangle();
 
 int uploadBuffer(float* buf) {
     if (buf == NULL) {

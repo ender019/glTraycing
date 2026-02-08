@@ -37,7 +37,7 @@ int initWindow(Context* ctx) {
     return 1;
 }
 
-int setWindowResizeCallback(Context* ctx, void(clbck)(GLFWwindow*, int, int)) {
+int setWindowResizeCallback(Context* ctx, void(clbck)(GLFWwindow* window, int width, int height)) {
     GLFWwindow* window = getCtxWindow(ctx);
     if (!window) {
         return -1;
