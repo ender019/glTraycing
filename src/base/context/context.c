@@ -5,6 +5,7 @@
 struct Context {
     unsigned int vao, vbo, ebo;
     GLuint program;
+//    ObjectCtx* objectCtx;
     GLFWwindow* window;
 };
 
@@ -13,6 +14,7 @@ Context* initContext(){
     if (!ctx) {
         return NULL;
     }
+//     ctx->objectCtx = initObjectCtx();
     return ctx;
 }
 
@@ -48,13 +50,18 @@ void setProgram(Context* ctx, GLint program) {
     ctx->program = program;
 }
 
+
+// ObjectCtx* getObjectCtx(Context* ctx) {
+//     return ctx->objectCtx;
+// }
+
 GLFWwindow* getCtxWindow(Context* ctx) {
     return ctx->window;
 }
 
 int setCtxWindow(Context* ctx, GLFWwindow* window) {
     if (window == NULL) {
-        return -1; 
+        return 0; 
     }
     if (ctx->window != NULL) {
         free(ctx->window); 
@@ -62,3 +69,9 @@ int setCtxWindow(Context* ctx, GLFWwindow* window) {
     ctx->window = window;
     return 1;
 }
+
+void freeContext(Context* ctx) {
+//     freeObjectCtx(ctx->objectCtx);
+    free(ctx);
+}
+
