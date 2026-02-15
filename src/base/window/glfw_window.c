@@ -10,7 +10,7 @@ int initWindow(Context* ctx) {
     // Инициализация GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Ошибка инициализации GLFW\n");
-        return -1;
+        return 0;
     }
 
     // Настройка GLFW для OpenGL 3.3
@@ -27,12 +27,12 @@ int initWindow(Context* ctx) {
     if (!window) {
         fprintf(stderr, "Ошибка создания окна\n");
         glfwTerminate();
-        return -1;
+        return 0;
     }
 
     glfwMakeContextCurrent(window);
     if (!setCtxWindow(ctx, window)) {
-        return -1;
+        return 0;
     }
     return 1;
 }
@@ -40,10 +40,10 @@ int initWindow(Context* ctx) {
 int setWindowResizeCallback(Context* ctx, void(clbck)(GLFWwindow* window, int width, int height)) {
     GLFWwindow* window = getCtxWindow(ctx);
     if (!window) {
-        return -1;
+        return 0;
     }
     if (clbck == NULL) {
-        return -1;
+        return 0;
     }
     glfwSetFramebufferSizeCallback(window, clbck);
     return 1;
@@ -52,7 +52,7 @@ int setWindowResizeCallback(Context* ctx, void(clbck)(GLFWwindow* window, int wi
 int startWindow(Context* ctx, int(work)(Context*)) {
     GLFWwindow* window = getCtxWindow(ctx);
     if (!window) {
-        return -1;
+        return 0;
     }
 
     if (work == NULL) {
