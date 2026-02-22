@@ -1,11 +1,11 @@
 #include "polygon_graphic.h"
 
-#include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <time.h>
 
 #include "src/base/graphics/base_graphic.h"
+#include "src/base/graphics/polygon/polygon_context.h"
 
 const float vertices[] = {
      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
@@ -50,12 +50,24 @@ struct PolygonCtx{
 
 
 int initPolygon(Context* ctx) {
+    if (!ctx) {
+        fprintf(stderr, "[ERROR] %s: Context is NULL\n", __func__);
+        return 0;
+    }
+
     initGraphics(ctx);
+    PolygonCtx* p_ctx = initPolygonCtx();
+    if (!p_ctx) {
+        fprintf(stderr, "[ERROR] %s: Failed to initialize PolygonCtx\n", __func__);
+        return 0;
+    }
+    setGraphicMode(getGraphicCtx(ctx), p_ctx);
 
     GLuint vs = compile_shader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fs = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
-    if (!compile_program(ctx, vs, fs)) {
+    if (!compile_program(getGraphicCtx(ctx), vs, fs)) {
+        fprintf(stderr, "[ERROR] %s: Shader program compilation failed\n", __func__);
         return 0; 
     }
 
@@ -64,6 +76,12 @@ int initPolygon(Context* ctx) {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
+
+    if (VAO == 0 || VBO == 0 || EBO == 0) {
+        fprintf(stderr, "[ERROR] %s: OpenGL buffer generation failed\n", __func__);
+        return 0;
+    }
+
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -77,21 +95,22 @@ int initPolygon(Context* ctx) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    setVAO(ctx, VAO);
-    setVBO(ctx, VBO);
-    setEBO(ctx, EBO);
+    setVAO(getGraphicCtx(ctx), VAO);
+    setVBO(getGraphicCtx(ctx), VBO);
+    setEBO(p_ctx, EBO);
 
     return 1;
 }
 
 
 int uploadPolygonBuffer(
-        Context* ctx,
+        GraphicCtx* ctx,
         const float *vertices, size_t vsize,
         const unsigned int *indices, size_t isize
 ) {
-    if (vertices == NULL) {
-        return 1;
+    if (!vertices || !indices || !ctx) {
+        fprintf(stderr, "[ERROR] %s: One of fields is NULL\n", __func__);
+        return 0;
     }
 
     glBindVertexArray(getVAO(ctx));
@@ -106,7 +125,7 @@ int uploadPolygonBuffer(
     return 1;
 }
 
-int process(Context* ctx) {
+int process(GraphicCtx* ctx) {
     time_t now = time(NULL);
     int fr = now % 10 - 5;
     float next[24];
@@ -120,18 +139,22 @@ int process(Context* ctx) {
 }
 
 int drawPolygon(Context* ctx) {
-    if (ctx == NULL) {
+    GraphicCtx* g_ctx = getGraphicCtx(ctx);
+    if (!ctx) {
+        fprintf(stderr, "[ERROR] %s: Failed to retrieve GraphicCtx from Context\n", __func__);
         return 0;
     }
     glClear(GL_COLOR_BUFFER_BIT);
     if (!setupRatio(ctx)) {
+        fprintf(stderr, "[ERROR] %s: setupRatio failed\n", __func__);
         return 0; 
     }
-    if (!process(ctx)) {
+    if (!process(g_ctx)) {
+        fprintf(stderr, "[ERROR] %s: process failed\n", __func__);
         return 0;
     }
-    glUseProgram(getProgram(ctx));
-    glBindVertexArray(getVAO(ctx));
+    glUseProgram(getProgram(g_ctx));
+    glBindVertexArray(getVAO(g_ctx));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     return 1;
