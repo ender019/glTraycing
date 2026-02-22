@@ -34,16 +34,20 @@ set(SOURCES
     main.c
     src/base/init.c
     src/base/context/context.c
+    src/base/graphics/graphic_context.c
     src/base/graphics/base_graphic.c
-    src/base/graphics/polygon_graphic.c
+    src/base/graphics/polygon/polygon_context.c
+    src/base/graphics/polygon/polygon_graphic.c
     src/base/window/glfw_window.c
 )
 
 set(HEADERS 
     src/base/init.h
     src/base/context/context.h
+    src/base/graphics/graphic_context.h
     src/base/graphics/base_graphic.h
-    src/base/graphics/polygon_graphic.h
+    src/base/graphics/polygon/polygon_context.h
+    src/base/graphics/polygon/polygon_graphic.h
     src/base/window/window.h
 )
 

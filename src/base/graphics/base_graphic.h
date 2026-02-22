@@ -3,14 +3,9 @@
 
 #include "src/base/context/context.h"
 
-typedef enum {
-    POLYGON,
-    BUFFER
-} GMode;
-
 GLuint compile_shader(GLenum type, const char* source);
 
-int compile_program(Context* ctx, GLuint vs, GLuint fs);
+int compile_program(GraphicCtx* ctx, GLuint vs, GLuint fs);
 
 int initGraphics(Context* ctx);
 

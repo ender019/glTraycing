@@ -17,10 +17,6 @@ int initWindow(Context* ctx) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
 
     // Создание окна
     GLFWwindow* window = glfwCreateWindow(800, 600, "GLFW + OpenGL Test", NULL, NULL);
@@ -56,6 +52,7 @@ int startWindow(Context* ctx, int(work)(Context*)) {
     }
 
     if (work == NULL) {
+        fprintf(stdout, "[WARN] %s: used mock worker \n", __func__);
         work = mockwork;
     }
 

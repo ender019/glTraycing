@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "src/base/context/context.h"
+#include "src/base/graphics/graphic_context.h"
 #include "src/base/window/window.h"
 
 GLuint compile_shader(GLenum type, const char* source) {
@@ -29,7 +31,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 
-int compile_program(Context* ctx, GLuint vs, GLuint fs) {
+int compile_program(GraphicCtx* ctx, GLuint vs, GLuint fs) {
     GLuint program = glCreateProgram();
     glAttachShader(program, vs);
     glAttachShader(program, fs);
@@ -68,17 +70,22 @@ int initGraphics(Context* ctx) {
     printf("Вендор: %s\n", glGetString(GL_VENDOR));
     setWindowResizeCallback(ctx, framebuffer_size_callback);
 
+    setGraphicCtx(ctx, initGraphicCtx());
+
     return 1;
 }
 
 int setupRatio(Context* ctx) {
+    if (ctx == NULL) {
+        return 0;
+    }
     GLFWwindow* window = getCtxWindow(ctx);
     if (window == NULL) {
         return 0;
     }
     int fb_width, fb_height;
     glfwGetFramebufferSize(window, &fb_width, &fb_height);
-    int uni_loc = glGetUniformLocation(getProgram(ctx), "window_d");
+    int uni_loc = glGetUniformLocation(getProgram(getGraphicCtx(ctx)), "window_d");
     glUniform1f(uni_loc, (float)fb_height / fb_width);
     return 1;
 }

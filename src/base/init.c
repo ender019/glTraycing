@@ -1,6 +1,6 @@
 #include "init.h"
 
-#include "src/base/graphics/polygon_graphic.h"
+#include "src/base/graphics/polygon/polygon_graphic.h"
 #include "src/base/window/window.h"
 
 int run() {
