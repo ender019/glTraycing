@@ -3,8 +3,7 @@
 #include <stdlib.h>
 
 struct Context {
-    unsigned int vao, vbo, ebo;
-    GLuint program;
+    GraphicCtx* graphicCtx;
 //    ObjectCtx* objectCtx;
     GLFWwindow* window;
 };
@@ -14,58 +13,42 @@ Context* initContext(){
     if (!ctx) {
         return NULL;
     }
+    ctx->graphicCtx = NULL;
+    ctx->window = NULL;
 //     ctx->objectCtx = initObjectCtx();
     return ctx;
 }
 
-GLint getVAO(Context* ctx) {
-    return ctx->vao;
+GraphicCtx* getGraphicCtx(Context* ctx) {
+    if(!ctx) {
+        return NULL;
+    }
+    return ctx->graphicCtx;
 }
 
-GLint getVBO(Context* ctx) {
-    return ctx->vbo;
+void setGraphicCtx(Context* ctx, GraphicCtx* g_ctx) {
+    if(!ctx) {
+        return;
+    }
+    ctx->graphicCtx = g_ctx;
 }
-
-GLint getEBO(Context* ctx) {
-    return ctx->ebo;
-}
-
-GLint getProgram(Context* ctx) {
-    return ctx->program;
-}
-
-void setVAO(Context* ctx, unsigned int vao) {
-    ctx->vao = vao;
-}
-
-void setVBO(Context* ctx, unsigned int vbo) {
-    ctx->vbo = vbo;
-}
-
-void setEBO(Context* ctx, unsigned int ebo) {
-    ctx->ebo = ebo;
-}
-
-void setProgram(Context* ctx, GLint program) {
-    ctx->program = program;
-}
-
 
 // ObjectCtx* getObjectCtx(Context* ctx) {
 //     return ctx->objectCtx;
 // }
 
 GLFWwindow* getCtxWindow(Context* ctx) {
+    if (!ctx) {
+        return NULL;
+    }
     return ctx->window;
 }
 
 int setCtxWindow(Context* ctx, GLFWwindow* window) {
-    if (window == NULL) {
-        return 0; 
+    if(!ctx) {
+        return 0;
     }
-    if (ctx->window != NULL) {
-        free(ctx->window); 
-    }
+    free(ctx->window); 
     ctx->window = window;
     return 1;
 }
